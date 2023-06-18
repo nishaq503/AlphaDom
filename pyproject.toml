@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "alpha-dom"
-version = "0.1.0-dev0"
+version = "0.1.0"
 description = "Playing Dominion with AlphaZero"
 authors = ["Najib Ishaq <najib_ishaq@zoho.com>"]
 license = "MIT"
