@@ -1,8 +1,11 @@
 [tool.poetry]
 name = "alpha-dom"
-version = "0.1.0"
-description = "Playing Dominion with AlphaZero"
-authors = ["Najib Ishaq <najib_ishaq@zoho.com>"]
+version = "0.1.1"
+description = "Playing Dominion with Deep Reinforcement Learning"
+authors = [
+    "Najib Ishaq <najib_ishaq@zoho.com>",
+    "Morgan Prior <meprior424@gmail.com>",
+]
 license = "MIT"
 readme = "README.md"
 packages = [{include = "alpha_dom", from = "python"}]
