@@ -12,6 +12,7 @@ packages = [{include = "alpha_dom", from = "python"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+pydantic = "^1.10.9"
 
 
 [tool.poetry.group.dev.dependencies]
