@@ -26,7 +26,15 @@ class Expansion(str, enum.Enum):
 
 
 class Card(pydantic.BaseModel):
-    """A pydantic model for a card in Dominion."""
+    """A pydantic model for a card in Dominion.
+
+    Attributes:
+        name: The name of the card.
+        cost: The cost of the card.
+        types: The types of the card.
+        description: The description of the card.
+        expansion: The expansion of the card.
+    """
 
     name: str
     cost: int
@@ -42,17 +50,24 @@ class Card(pydantic.BaseModel):
         """Return a string representation of the card."""
         line = ", ".join(
             [
-                self.name,
-                str(self.cost),
-                ", ".join(self.types),
-                self.description,
-                self.expansion,
+                f"name: {self.name}",
+                f"cost: {self.cost}",
+                f"types: [{', '.join(self.types)}]",
+                f"description: {self.description}",
+                f"expansion: {self.expansion}",
             ],
         )
         return f"Card({line})"
 
     def __eq__(self, other: typing.Self) -> bool:  # type: ignore[override]
-        """Return whether the cards are equal."""
+        """Return whether the cards are identical.
+
+        Args:
+            other: The other card.
+
+        Returns:
+            Whether the cards are identical.
+        """
         return self.name == other.name
 
     def __hash__(self) -> int:
@@ -68,3 +83,49 @@ class Card(pydantic.BaseModel):
         )
         with path.open("w") as f:
             json.dump(self.dict(), f, indent=2)
+
+
+def load(name: str, expansion: Expansion) -> Card:
+    """Load a card from a json file.
+
+    Args:
+        name: The name of the card.
+        expansion: The expansion of the card.
+
+    Returns:
+        The card.
+
+    Raises:
+        FileNotFoundError: If the card does not exist.
+    """
+    path = pathlib.Path(__file__).parent.joinpath(
+        "expansions",
+        expansion.value,
+        f"{name}.json",
+    )
+    if path.exists():
+        with path.open() as f:
+            return Card(**json.load(f))
+    else:
+        msg = f"{name} is not a card in {expansion.value}"
+        raise FileNotFoundError(msg)
+
+
+def load_expansion(expansion: Expansion) -> list[Card]:
+    """Return all the cards in the given expansion."""
+    expansion_dir = pathlib.Path(__file__).parent.joinpath(
+        "expansions",
+        expansion.value,
+    )
+
+    cards = []
+    for path in filter(lambda p: p.suffix == ".json", expansion_dir.iterdir()):
+        with path.open() as f:
+            cards.append(Card(**json.load(f)))
+
+    return cards
+
+
+def load_base() -> list[Card]:
+    """Return all the cards in the base game."""
+    return Card.load_expansion(Expansion.base)
