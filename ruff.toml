@@ -47,7 +47,7 @@ convention = "google"
 
 [per-file-ignores]
 "__init__.py" = ["F401"]  # Unused import.
-"python/tests/**/*.py" = ["S101"]  # Use of assert detected.
+"python/tests/*.py" = ["S101"]  # Use of assert detected.
 
 [isort]
 force-single-line = true

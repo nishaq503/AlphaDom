@@ -1,22 +1,21 @@
 """Provides the models for the cards from the base game."""
 
-from . import model
 from .model import Card
 from .model import Expansion
 from .model import Type
+from .model import load
+from .model import load_all
+from .model import load_base
+from .model import load_common
+from .model import load_expansion
 
-__base_cards = model.load_base()
-__common_cards = model.load_common()
-
-__all_cards = __common_cards + __base_cards
-
-
-def __getattr__(name: str) -> Card | list[Card]:
-    if name == "list":
-        return __all_cards
-    if name == "list_base":
-        return __base_cards
-    if name == "list_common":
-        return __common_cards
-
-    return model.load(name, Expansion.Base)
+__all__ = [
+    "Card",
+    "Expansion",
+    "Type",
+    "load",
+    "load_all",
+    "load_base",
+    "load_common",
+    "load_expansion",
+]
