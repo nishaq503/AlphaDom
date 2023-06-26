@@ -3,4 +3,4 @@
 
 from alpha_dom import cards
 
-list(map(print, map(repr, cards.list)))
+list(map(print, map(repr, sorted(cards.load_all()))))

@@ -22,7 +22,50 @@ class Type(str, enum.Enum):
 class Expansion(str, enum.Enum):
     """The expansions of Dominion."""
 
+    Common = "Common"
     Base = "Base"
+
+    def list_names(self) -> list[str]:
+        """Return all the cards in the expansion."""
+        match self:
+            case Expansion.Common:
+                return [
+                    "Copper",
+                    "Curse",
+                    "Duchy",
+                    "Estate",
+                    "Gold",
+                    "Province",
+                    "Silver",
+                ]
+            case Expansion.Base:
+                return [
+                    "Artisan",
+                    "Bandit",
+                    "Bureaucrat",
+                    "Cellar",
+                    "Chapel",
+                    "Council Room",
+                    "Festival",
+                    "Gardens",
+                    "Harbinger",
+                    "Library",
+                    "Market",
+                    "Merchant",
+                    "Militia",
+                    "Mine",
+                    "Moat",
+                    "Moneylender",
+                    "Poacher",
+                    "Remodel",
+                    "Sentry",
+                    "Smithy",
+                    "Throne Room",
+                    "Vassal",
+                    "Village",
+                    "Witch",
+                    "Workshop",
+                ]
 
 
 class Card(pydantic.BaseModel):
@@ -54,7 +97,7 @@ class Card(pydantic.BaseModel):
                 f"cost: {self.cost}",
                 f"types: [{', '.join(self.types)}]",
                 f"description: {self.description}",
-                f"expansion: {self.expansion}",
+                f"expansion: {self.expansion.value}",
             ],
         )
         return f"Card({line})"
@@ -70,22 +113,21 @@ class Card(pydantic.BaseModel):
         """
         return self.name == other.name
 
+    def __lt__(self, other: typing.Self) -> bool:  # type: ignore[override]
+        """Allows to sort cards by their name."""
+        return self.name < other.name
+
     def __hash__(self) -> int:
         """Return the hash of the card."""
         return hash(self.name)
 
-    def save(self) -> None:
+    def save(self, dir_path: pathlib.Path) -> None:
         """Save the card to a json file."""
-        path = pathlib.Path(__file__).parent.joinpath(
-            "expansions",
-            self.expansion.value,
-            f"{self.name}.json",
-        )
-        with path.open("w") as f:
+        with dir_path.joinpath(f"{self.name}.json").open("w") as f:
             json.dump(self.dict(), f, indent=2)
 
 
-def load(name: str, expansion: Expansion) -> Card:
+def load(name: str, expansion: Expansion | None = None) -> Card:
     """Load a card from a json file.
 
     Args:
@@ -98,6 +140,16 @@ def load(name: str, expansion: Expansion) -> Card:
     Raises:
         FileNotFoundError: If the card does not exist.
     """
+    if expansion is None:
+        for e in Expansion:
+            try:
+                return load(name, e)
+            except FileNotFoundError:
+                pass
+
+        msg = f"{name} is not a card in any expansion"
+        raise FileNotFoundError(msg)
+
     path = pathlib.Path(__file__).parent.joinpath(
         "expansions",
         expansion.value,
@@ -106,9 +158,9 @@ def load(name: str, expansion: Expansion) -> Card:
     if path.exists():
         with path.open() as f:
             return Card(**json.load(f))
-    else:
-        msg = f"{name} is not a card in {expansion.value}"
-        raise FileNotFoundError(msg)
+
+    msg = f"{name} is not a card in {expansion}"
+    raise FileNotFoundError(msg)
 
 
 def load_expansion(expansion: Expansion) -> list[Card]:
@@ -148,3 +200,12 @@ def load_common() -> list[Card]:
             cards.append(Card(**json.load(f)))
 
     return cards
+
+
+def load_all() -> list[Card]:
+    """Return all the cards in the game.
+
+    So far, this includes all the cards in the base game and all the
+    common cards from the base game.
+    """
+    return load_base() + load_common()
