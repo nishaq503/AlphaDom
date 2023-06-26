@@ -14,5 +14,9 @@ __all_cards = __common_cards + __base_cards
 def __getattr__(name: str) -> Card | list[Card]:
     if name == "list":
         return __all_cards
+    if name == "list_base":
+        return __base_cards
+    if name == "list_common":
+        return __common_cards
 
     return model.load(name, Expansion.Base)
