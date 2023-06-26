@@ -12,7 +12,7 @@ jobs:
           python-version: 3.11
       - uses: pre-commit/action@v3.0.0
 
-  unittest:
+  pytest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,4 +23,4 @@ jobs:
         run: |
           pip install --user poetry && poetry install
       - name: Run
-        run: poetry run python -m unittest discover python
+        run: poetry run pytest
