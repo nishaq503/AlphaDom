@@ -1,9 +1,0 @@
-{
-  "name": "Estate",
-  "cost": 2,
-  "types": [
-    "Victory"
-  ],
-  "description": "+1 victory point",
-  "expansion": "base"
-}

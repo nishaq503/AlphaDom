@@ -1,9 +1,0 @@
-{
-  "name": "Province",
-  "cost": 8,
-  "types": [
-    "Victory"
-  ],
-  "description": "+6 victory points",
-  "expansion": "base"
-}
