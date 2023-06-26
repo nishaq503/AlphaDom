@@ -128,4 +128,4 @@ def load_expansion(expansion: Expansion) -> list[Card]:
 
 def load_base() -> list[Card]:
     """Return all the cards in the base game."""
-    return Card.load_expansion(Expansion.base)
+    return load_expansion(Expansion.base)
