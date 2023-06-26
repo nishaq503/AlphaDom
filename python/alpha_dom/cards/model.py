@@ -112,7 +112,7 @@ def load(name: str, expansion: Expansion) -> Card:
 
 
 def load_expansion(expansion: Expansion) -> list[Card]:
-    """Return all the action cards in the given expansion."""
+    """Return all the kingdom cards in the given expansion."""
     expansion_dir = pathlib.Path(__file__).parent.joinpath(
         "expansions",
         expansion.value,
@@ -127,14 +127,14 @@ def load_expansion(expansion: Expansion) -> list[Card]:
 
 
 def load_base() -> list[Card]:
-    """Return all the action cards in the base game."""
+    """Return all the kingdom cards in the base game."""
     return load_expansion(Expansion.Base)
 
 
 def load_common() -> list[Card]:
     """Return all the common cards from the base game.
 
-    Common refers to Curses, Treasures, and non-supply
+    Common refers to Curses, Treasures, and non-kingdom
     Victory cards from the base game.
     """
     common_dir = pathlib.Path(__file__).parent.joinpath(
