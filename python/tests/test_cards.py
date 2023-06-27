@@ -59,8 +59,8 @@ def test_card_representations() -> None:
 
     artisan_repr = (
         "name: Artisan, "
-        "cost: 6, types: "
-        "[Action], "
+        "cost: 6, "
+        "types: [Action], "
         "description: Gain a card to your hand costing up to 5 coins. "
         "Put a card from your hand onto your deck, "
         "expansion: Base"
@@ -138,7 +138,7 @@ def test_card_cost() -> None:
 def test_saving_cards() -> None:
     """Test that cards can be saved."""
     with tempfile.TemporaryDirectory() as cards_dir:
-        path = pathlib.Path(cards_dir).joinpath("artisan.json")
+        path = pathlib.Path(cards_dir).joinpath("Artisan.json")
         artisan = cards.load("Artisan")
         artisan.save(path.parent)
 
