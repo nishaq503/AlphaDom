@@ -1,4 +1,4 @@
-# AlphaDom (v0.1.3)
+# AlphaDom (v0.1.4)
 
 Playing Dominion with Deep Reinforcement Learning.
 
