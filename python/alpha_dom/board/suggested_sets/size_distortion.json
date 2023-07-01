@@ -1,0 +1,15 @@
+{
+  "name": "size_distortion",
+  "kingdom_names": [
+    "Artisan",
+    "Bandit",
+    "Bureaucrat",
+    "Chapel",
+    "Festival",
+    "Gardens",
+    "Sentry",
+    "Throne Room",
+    "Witch",
+    "Workshop"
+  ]
+}

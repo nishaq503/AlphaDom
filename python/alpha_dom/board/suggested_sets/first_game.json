@@ -1,0 +1,15 @@
+{
+  "name": "first_game",
+  "kingdom_names": [
+    "Cellar",
+    "Market",
+    "Militia",
+    "Mine",
+    "Moat",
+    "Remodel",
+    "Smithy",
+    "Village",
+    "Woodcutter",
+    "Workshop"
+  ]
+}

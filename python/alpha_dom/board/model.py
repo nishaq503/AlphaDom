@@ -27,9 +27,9 @@ class Board(pydantic.BaseModel):
 
     name: str
     kingdom_names: list[str]
-    kingdom: list[Card]
-    non_kingdom_supply: list[Card]
-    trash: dict[Card, int]
+    kingdom: list[Card] = []
+    non_kingdom_supply: list[Card] = []
+    trash: dict[Card, int] = {}
 
     def __str__(self) -> str:
         """Return the name of the board."""
@@ -71,7 +71,7 @@ class Board(pydantic.BaseModel):
     def save(self, dir_path: pathlib.Path) -> None:
         """Save the card to a json file."""
         with dir_path.joinpath(f"{self.name}.json").open("w") as f:
-            json.dump(self.dict(), f, indent=2)
+            json.dump(self.dict(exclude_defaults=True), f, indent=2)
 
 
 def load_random() -> Board:
