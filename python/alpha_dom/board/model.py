@@ -66,7 +66,7 @@ class Board(pydantic.BaseModel):
     def save(self, dir_path: pathlib.Path) -> None:
         """Save the card to a json file."""
         with dir_path.joinpath(f"{self.name}.json").open("w") as f:
-            json.dump(self.dict(exclude_defaults=True), f, indent=2)
+            json.dump(self.model_dump(exclude_defaults=True), f, indent=2)
 
 
 def load_random() -> Board:
