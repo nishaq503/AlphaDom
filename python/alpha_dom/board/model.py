@@ -54,11 +54,9 @@ class Board(pydantic.BaseModel):
         Returns:
             Whether the boards are identical.
         """
-        # TODO: decide if this is really what equality should mean
-        # Should we account for what is in the trash or should this
-        # only consider the starting state?
-
-        return self.kingdom_names == other.kingdom_names
+        # TODO: Ensure that the same kingdom cards
+        # listed in a different order are equal
+        return self.name == other.name
 
     def __lt__(self, other: typing.Self) -> bool:  # type: ignore[override]
         """Allows sorting kindgoms by name."""
@@ -77,6 +75,7 @@ class Board(pydantic.BaseModel):
 def load_random() -> Board:
     """Load board with 10 random kingdom cards from the Base set."""
     kingdom_names: list[str] = random.sample(Expansion.Base.list_names(), 10)
+    kingdom_names.sort()
 
     name = "-".join(kingdom_names)
 
@@ -84,7 +83,7 @@ def load_random() -> Board:
 
 
 def load_suggested() -> Board:
-    """Load voard from suggested set of kingdom cards."""
+    """Load board from suggested set of kingdom cards."""
     raise NotImplementedError
 
 
