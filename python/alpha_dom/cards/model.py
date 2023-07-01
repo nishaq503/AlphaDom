@@ -49,6 +49,7 @@ class Expansion(str, enum.Enum):
                     "Festival",
                     "Gardens",
                     "Harbinger",
+                    "Laboratory",
                     "Library",
                     "Market",
                     "Merchant",
