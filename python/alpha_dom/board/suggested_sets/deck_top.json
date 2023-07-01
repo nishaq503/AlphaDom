@@ -1,0 +1,15 @@
+{
+  "name": "deck_top",
+  "kingdom_names": [
+    "Artisan",
+    "Bureaucrat",
+    "Council Room",
+    "Festival",
+    "Harbinger",
+    "Laboratory",
+    "Moneylender",
+    "Sentry",
+    "Vassal",
+    "Village"
+  ]
+}
