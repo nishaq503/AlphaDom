@@ -124,7 +124,7 @@ class Card(pydantic.BaseModel):
     def save(self, dir_path: pathlib.Path) -> None:
         """Save the card to a json file."""
         with dir_path.joinpath(f"{self.name}.json").open("w") as f:
-            json.dump(self.dict(), f, indent=2)
+            json.dump(self.model_dump(), f, indent=2)
 
 
 def load(name: str, expansion: Expansion | None = None) -> Card:
