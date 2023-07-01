@@ -1,4 +1,4 @@
-"""Implements Dominion kindom as a pydantic model."""
+"""Implements Dominion kingdom as a pydantic model."""
 
 import json
 import pathlib
@@ -7,10 +7,7 @@ import typing
 
 import pydantic
 
-from ..cards import Card
-from ..cards import Expansion
-from ..cards import load
-from ..cards import load_common
+from .. import cards
 
 
 class Board(pydantic.BaseModel):
@@ -27,9 +24,9 @@ class Board(pydantic.BaseModel):
 
     name: str
     kingdom_names: list[str]
-    kingdom: list[Card] = []
-    non_kingdom_supply: list[Card] = []
-    trash: dict[Card, int] = {}
+    kingdom: list[cards.Card] = []
+    non_kingdom_supply: list[cards.Card] = []
+    trash: dict[cards.Card, int] = {}
 
     def __str__(self) -> str:
         """Return the name of the board."""
@@ -74,7 +71,7 @@ class Board(pydantic.BaseModel):
 
 def load_random() -> Board:
     """Load board with 10 random kingdom cards from the Base set."""
-    kingdom_names: list[str] = random.sample(Expansion.Base.list_names(), 10)
+    kingdom_names: list[str] = random.sample(cards.Expansion.Base.list_names(), 10)
     kingdom_names.sort()
 
     name = "-".join(kingdom_names)
@@ -87,7 +84,7 @@ def load_suggested() -> Board:
     raise NotImplementedError
 
 
-def load_board(path: pathlib.Path) -> Board:
+def load(path: pathlib.Path) -> Board:
     """Load a board from a json file."""
     if path.exists():
         with path.open() as f:
@@ -95,12 +92,12 @@ def load_board(path: pathlib.Path) -> Board:
 
             board.kingdom = []
             for card in board.kingdom_names:
-                board.kingdom.append(load(card))
+                board.kingdom.append(cards.load(card))
 
-            board.non_kingdom_supply = load_common()
+            board.non_kingdom_supply = cards.load_common()
 
             # TODO: Account for the fact that not every set needs curses
-            # Conditionally remove from common? Or load common cards indiviudally?
+            # Conditionally remove from common? Or load common cards individually?
 
             return board
 
