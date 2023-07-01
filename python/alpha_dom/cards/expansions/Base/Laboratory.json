@@ -1,0 +1,9 @@
+{
+  "name": "Laboratory",
+  "cost": 5,
+  "types": [
+    "Action"
+  ],
+  "description": "Draw 2 cards, +1 Action.",
+  "expansion": "Base"
+}

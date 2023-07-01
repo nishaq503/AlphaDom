@@ -15,6 +15,7 @@ def test_base_cards() -> None:
         "Festival",
         "Gardens",
         "Harbinger",
+        "Laboratory",
         "Library",
         "Market",
         "Merchant",
