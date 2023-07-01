@@ -24,9 +24,8 @@ class Board(pydantic.BaseModel):
     """
 
     name: str
-    kingdom_names: list[str]
-    kingdom: list[cards.Card] = []
-    non_kingdom_supply: list[cards.Card] = []
+    kingdom_names: list[cards.Card]
+    non_kingdom_supply: list[cards.Card] = cards.load_common()
     trash: dict[cards.Card, int] = {}
 
     def __str__(self) -> str:
@@ -37,7 +36,7 @@ class Board(pydantic.BaseModel):
         """Return a string representation of the board."""
         line = ", ".join(
             [
-                f"kingdom: {self.kingdom}",
+                f"kingdom: {self.kingdom_names}",
             ],
         )
         return f"Board({line})"
@@ -64,6 +63,11 @@ class Board(pydantic.BaseModel):
         """Returns the hash of the card."""
         return hash(self.name)
 
+    def __init__(self, name: str, kingdom_names: list[str]) -> None:
+        """Initialize the board."""
+        kingdom_names = list(map(cards.load, kingdom_names))
+        super().__init__(name=name, kingdom_names=kingdom_names)
+
     def save(self, dir_path: pathlib.Path) -> None:
         """Save the card to a json file."""
         with dir_path.joinpath(f"{self.name}.json").open("w") as f:
@@ -85,12 +89,6 @@ def load(path: pathlib.Path) -> Board:
     if path.exists():
         with path.open() as f:
             board = Board(**json.load(f))
-
-            board.kingdom = []
-            for card in board.kingdom_names:
-                board.kingdom.append(cards.load(card))
-
-            board.non_kingdom_supply = cards.load_common()
 
             # TODO: Account for the fact that not every set needs curses
             # Conditionally remove from common? Or load common cards individually?

@@ -5,5 +5,6 @@
     "Action"
   ],
   "description": "Draw until you have 7 cards in hand. You may set aside any Action cards drawn this way, and then discard them",
-  "expansion": "Base"
+  "expansion": "Base",
+  "associated_cards": []
 }

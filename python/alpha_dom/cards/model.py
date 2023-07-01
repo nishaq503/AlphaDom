@@ -85,6 +85,7 @@ class Card(pydantic.BaseModel):
     types: list[Type]
     description: str
     expansion: Expansion
+    associated_cards: list["Card"] = []
 
     def __str__(self) -> str:
         """Return the name of the card."""
@@ -99,6 +100,7 @@ class Card(pydantic.BaseModel):
                 f"types: [{', '.join(self.types)}]",
                 f"description: {self.description}",
                 f"expansion: {self.expansion.value}",
+                f"associated_cards: [{', '.join(map(str, self.associated_cards))}]",
             ],
         )
         return f"Card({line})"
@@ -121,6 +123,14 @@ class Card(pydantic.BaseModel):
     def __hash__(self) -> int:
         """Return the hash of the card."""
         return hash(self.name)
+
+    def __init__(self, **kwargs: typing.Any) -> None:  # noqa: ANN401
+        """Initialize the card."""
+        if "associated_cards" in kwargs:
+            kwargs["associated_cards"] = list(map(load, kwargs["associated_cards"]))
+        else:
+            kwargs["associated_cards"] = []
+        super().__init__(**kwargs)
 
     def save(self, dir_path: pathlib.Path) -> None:
         """Save the card to a json file."""
@@ -166,17 +176,7 @@ def load(name: str, expansion: Expansion | None = None) -> Card:
 
 def load_expansion(expansion: Expansion) -> list[Card]:
     """Return all the kingdom cards in the given expansion."""
-    expansion_dir = pathlib.Path(__file__).parent.joinpath(
-        "expansions",
-        expansion.value,
-    )
-
-    cards = []
-    for path in filter(lambda p: p.suffix == ".json", expansion_dir.iterdir()):
-        with path.open() as f:
-            cards.append(Card(**json.load(f)))
-
-    return cards
+    return [load(name, expansion) for name in expansion.list_names()]
 
 
 def load_base() -> list[Card]:
@@ -190,17 +190,7 @@ def load_common() -> list[Card]:
     Common refers to Curses, Treasures, and non-kingdom
     Victory cards from the base game.
     """
-    common_dir = pathlib.Path(__file__).parent.joinpath(
-        "expansions",
-        "Common",
-    )
-
-    cards = []
-    for path in filter(lambda p: p.suffix == ".json", common_dir.iterdir()):
-        with path.open() as f:
-            cards.append(Card(**json.load(f)))
-
-    return cards
+    return load_expansion(Expansion.Common)
 
 
 def load_all() -> list[Card]:

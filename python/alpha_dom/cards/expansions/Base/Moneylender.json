@@ -5,5 +5,6 @@
     "Action"
   ],
   "description": "Trash a Copper from your hand.\nIf you do, +3 Coins",
-  "expansion": "Base"
+  "expansion": "Base",
+  "associated_cards": []
 }

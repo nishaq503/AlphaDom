@@ -5,5 +5,6 @@
     "Action"
   ],
   "description": "+2 actions, +1 buy, +2 coins",
-  "expansion": "Base"
+  "expansion": "Base",
+  "associated_cards": []
 }

@@ -5,5 +5,6 @@
     "Victory"
   ],
   "description": "Worth 1 VP per 10 cards you have (rounded down)",
-  "expansion": "Base"
+  "expansion": "Base",
+  "associated_cards": []
 }

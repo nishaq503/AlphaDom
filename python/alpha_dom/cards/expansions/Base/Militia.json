@@ -6,5 +6,6 @@
     "Attack"
   ],
   "description": "+2 coins. Each other player discards down to 3 cards in hand",
-  "expansion": "Base"
+  "expansion": "Base",
+  "associated_cards": []
 }
