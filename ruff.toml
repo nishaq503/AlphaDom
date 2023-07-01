@@ -48,6 +48,10 @@ convention = "google"
 [per-file-ignores]
 "__init__.py" = ["F401"]  # Unused import.
 "python/tests/*.py" = ["S101"]  # Use of assert detected.
+"examples/*.py" = [
+  "T201",  # Use of `print` found.
+  "T203",  # Use of `pprint` found.
+]
 
 [isort]
 force-single-line = true

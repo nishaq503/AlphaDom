@@ -1,5 +1,6 @@
 """Implements Dominion kingdom as a pydantic model."""
 
+import enum
 import json
 import pathlib
 import random
@@ -79,11 +80,6 @@ def load_random() -> Board:
     return Board(name=name, kingdom_names=kingdom_names)
 
 
-def load_suggested() -> Board:
-    """Load board from suggested set of kingdom cards."""
-    raise NotImplementedError
-
-
 def load(path: pathlib.Path) -> Board:
     """Load a board from a json file."""
     if path.exists():
@@ -103,3 +99,18 @@ def load(path: pathlib.Path) -> Board:
 
     msg = f"{path} is not a valid path to a board"
     raise FileNotFoundError(msg)
+
+
+class SuggestedSet(str, enum.Enum):
+    """The suggested boards for base-game Dominion."""
+
+    DeckTop = "deck_top"
+    FirstGame = "first_game"
+    SizeDistortion = "size_distortion"
+
+
+def load_suggested(name: SuggestedSet) -> Board:
+    """Load board from suggested set of kingdom cards."""
+    return load(
+        pathlib.Path(__file__).parent.joinpath("suggested_sets", f"{name.value}.json"),
+    )
