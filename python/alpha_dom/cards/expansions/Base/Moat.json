@@ -6,5 +6,6 @@
     "Reaction"
   ],
   "description": "+2 cards, when another player plays an attack card, you may reveal this from your hand. If you do, you are unaffected by that attack",
-  "expansion": "Base"
+  "expansion": "Base",
+  "associated_cards": []
 }

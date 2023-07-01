@@ -6,5 +6,8 @@
     "Attack"
   ],
   "description": "+2 cards. Each other player gains a Curse card",
-  "expansion": "Base"
+  "expansion": "Base",
+  "associated_cards": [
+    "Curse"
+  ]
 }

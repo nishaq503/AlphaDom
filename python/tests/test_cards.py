@@ -63,12 +63,30 @@ def test_card_representations() -> None:
         "types: [Action], "
         "description: Gain a card to your hand costing up to 5 coins. "
         "Put a card from your hand onto your deck, "
-        "expansion: Base"
+        "expansion: Base, "
+        "associated_cards: []"
     )
     artisan_repr = f"Card({artisan_repr})"
     assert artisan_repr == repr(
         artisan,
     ), f"Artisan repr is not correct. {artisan_repr} != {artisan!r}"
+
+    witch = cards.load("Witch", Expansion.Base)
+    assert witch.name == "Witch", f"Witch name is not Witch. {witch.name}"
+    assert str(witch) == "Witch", f"Witch string is not Witch. {witch!s}"
+
+    witch_repr = (
+        "name: Witch, "
+        "cost: 5, "
+        "types: [Action, Attack], "
+        "description: +2 cards. Each other player gains a Curse card, "
+        "expansion: Base, "
+        "associated_cards: [Curse]"
+    )
+    witch_repr = f"Card({witch_repr})"
+    assert witch_repr == repr(
+        witch,
+    ), f"Witch repr is not correct. {witch_repr} != {witch!r}"
 
 
 def test_hash() -> None:
@@ -143,3 +161,21 @@ def test_saving_cards() -> None:
         artisan.save(path.parent)
 
         assert path.exists(), "Artisan not saved."
+
+
+def test_associated_cards() -> None:
+    """Test associated cards."""
+    artisan = cards.load("Artisan")
+    assert artisan.associated_cards == [], "Artisan has associated cards."
+
+    curse = cards.load("Curse")
+    witch = cards.load("Witch")
+    assert witch.associated_cards == [curse], "Witch has incorrect associated cards."
+
+    for c in cards.load_all():
+        if c.name == "Witch":
+            assert c.associated_cards == [
+                curse,
+            ], f"{c.name} has incorrect associated cards."
+        else:
+            assert c.associated_cards == [], f"{c.name} has associated cards."
