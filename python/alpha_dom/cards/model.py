@@ -174,9 +174,22 @@ def load(name: str, expansion: Expansion | None = None) -> Card:
     raise FileNotFoundError(msg)
 
 
-def load_expansion(expansion: Expansion) -> list[Card]:
-    """Return all the kingdom cards in the given expansion."""
-    return [load(name, expansion) for name in expansion.list_names()]
+def load_expansion(
+    expansion: Expansion,
+    exclude: list[str] | None = None,
+) -> list[Card]:
+    """Return all the kingdom cards in the given expansion.
+
+    Args:
+        expansion: The expansion to load.
+        exclude: Optional list of names of cards to exclude.
+    """
+    if exclude is None:
+        return [load(name, expansion) for name in expansion.list_names()]
+
+    return [
+        load(name, expansion) for name in expansion.list_names() if name not in exclude
+    ]
 
 
 def load_base() -> list[Card]:
@@ -184,13 +197,19 @@ def load_base() -> list[Card]:
     return load_expansion(Expansion.Base)
 
 
-def load_common() -> list[Card]:
+def load_common(load_curse: bool = True) -> list[Card]:
     """Return all the common cards from the base game.
 
     Common refers to Curses, Treasures, and non-kingdom
     Victory cards from the base game.
+
+    Args:
+        load_curse: Whether to load the Curse card.
     """
-    return load_expansion(Expansion.Common)
+    if load_curse:
+        return load_expansion(Expansion.Common)
+
+    return load_expansion(Expansion.Common, exclude=["Curse"])
 
 
 def load_all() -> list[Card]:
