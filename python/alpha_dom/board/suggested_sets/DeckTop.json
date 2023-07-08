@@ -1,6 +1,6 @@
 {
-  "name": "deck_top",
-  "kingdom_names": [
+  "name": "DeckTop",
+  "kingdom_supply_cards": [
     "Artisan",
     "Bureaucrat",
     "Council Room",

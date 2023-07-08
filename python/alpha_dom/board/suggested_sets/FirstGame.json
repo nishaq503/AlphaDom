@@ -1,6 +1,6 @@
 {
-  "name": "first_game",
-  "kingdom_names": [
+  "name": "FirstGame",
+  "kingdom_supply_cards": [
     "Cellar",
     "Market",
     "Militia",
