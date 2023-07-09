@@ -57,18 +57,22 @@ class Player(pydantic.BaseModel):
         """Returns the hash of the player."""
         return hash(self.id)
 
-    def draw(self, n: int = 1) -> None:
-        """Draw `n` cards from the draw pile."""
-        for _ in range(n):
-            if not self.draw_pile:
-                self.draw_pile = [
-                    card
-                    for card, multiplicity in self.discard_pile.items()
-                    for _ in range(multiplicity)
-                ]
-                random.shuffle(self.draw_pile)
-                self.discard_pile = {}
+    def draw(self) -> cards.Card | None:
+        """Draw a card from the draw pile.
 
-            # Draw a card from the draw pile and add it to the hand
-            card = self.draw_pile.pop()
-            self.hand[card] = self.hand.get(card, 0) + 1
+        Returns:
+            - next card in the draw pile if a card can be drawn
+            - None if the draw pile and discard pile are both empty
+        """
+        if not self.draw_pile and not self.discard_pile:
+            return None
+        if not self.draw_pile:
+            self.draw_pile = [
+                card
+                for card, multiplicity in self.discard_pile.items()
+                for _ in range(multiplicity)
+            ]
+            random.shuffle(self.draw_pile)
+            self.discard_pile = {}
+
+        return self.draw_pile.pop()
