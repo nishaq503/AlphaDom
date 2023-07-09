@@ -27,6 +27,9 @@ class Player(pydantic.BaseModel):
     draw_pile: list[cards.Card] = []
     hand: dict[cards.Card, int] = {}
     discard_pile: dict[cards.Card, int] = {}
+    turn_money: int = 0
+    turn_actions: int = 1
+    turn_buys: int = 1
 
     def __str__(self) -> str:
         """Return the id of the player."""
@@ -76,3 +79,30 @@ class Player(pydantic.BaseModel):
             self.discard_pile = {}
 
         return self.draw_pile.pop()
+
+    def gain(
+        self,
+        card: cards.Card,
+        location: typing.Literal["DiscardPile", "DrawPile", "Hand"],
+    ) -> None:
+        """Gain a card to the specified location."""
+        if location == "DiscardPile":
+            self.discard_pile[card] = self.discard_pile.get(card, 0) + 1
+        elif location == "DrawPile":
+            self.draw_pile.append(card)
+        elif location == "Hand":
+            self.hand[card] = self.hand.get(card, 0) + 1
+        else:
+            msg = f"Invalid location: {location}. Must be one of 'DiscardPile', 'DrawPile', or 'Hand'."  # noqa: E501
+            raise ValueError(
+                msg,
+            )
+
+    def buy(self, card: cards.Card) -> None:
+        """Buy a card."""
+        # I assume we would want to check "legality" of a buy before we get here.
+        # i.e. check if the card is in the supply, if the player has enough money,
+        # if the player has enough buys, etc.
+        self.turn_money -= card.cost
+        self.turn_buys -= 1
+        self.gain(card, "DiscardPile")
