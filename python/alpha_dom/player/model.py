@@ -30,10 +30,11 @@ class Player(pydantic.BaseModel):
     turn_money: int = 0
     turn_actions: int = 1
     turn_buys: int = 1
+    cards_in_play: list[cards.Card] = []
 
     def __str__(self) -> str:
         """Return the id of the player."""
-        return self.id
+        return str(self.name)
 
     def __repr__(self) -> str:
         """Return a string representation of the player."""
@@ -50,15 +51,15 @@ class Player(pydantic.BaseModel):
 
     def __eq__(self, other: typing.Self) -> bool:  # type: ignore[override]
         """Return whether the players are identical."""
-        return self.id == other.id
+        return self.name == other.name
 
     def __lt__(self, other: typing.Self) -> bool:  # type: ignore[override]
         """Allows sorting players by id."""
-        return self.id < other.id
+        return self.name < other.name
 
     def __hash__(self) -> int:
         """Returns the hash of the player."""
-        return hash(self.id)
+        return hash(self.name)
 
     def draw(self) -> cards.Card | None:
         """Draw a card from the draw pile.
@@ -106,3 +107,23 @@ class Player(pydantic.BaseModel):
         self.turn_money -= card.cost
         self.turn_buys -= 1
         self.gain(card, "DiscardPile")
+
+    def cleanup(self) -> None:
+        """Clean up the player's turn."""
+        for card, multiplicity in self.hand.items():
+            if card in self.discard_pile:
+                self.discard_pile[card] += multiplicity
+            else:
+                self.discard_pile[card] = multiplicity
+
+        for card in self.cards_in_play:
+            if card in self.discard_pile:
+                self.discard_pile[card] += 1
+            else:
+                self.discard_pile[card] = 1
+
+        self.hand = {}
+        self.cards_in_play = []
+        self.turn_money = 0
+        self.turn_actions = 1
+        self.turn_buys = 1
