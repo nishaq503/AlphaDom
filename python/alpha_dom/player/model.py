@@ -5,6 +5,7 @@ import typing
 
 import pydantic
 
+from alpha_dom import board
 from alpha_dom import cards
 
 
@@ -85,7 +86,8 @@ class Player(pydantic.BaseModel):
         self,
         card: cards.Card,
         location: typing.Literal["DiscardPile", "DrawPile", "Hand"],
-    ) -> None:
+        board: board.Board,
+    ) -> board.Board:
         """Gain a card to the specified location."""
         if location == "DiscardPile":
             self.discard_pile[card] = self.discard_pile.get(card, 0) + 1
@@ -94,19 +96,28 @@ class Player(pydantic.BaseModel):
         elif location == "Hand":
             self.hand[card] = self.hand.get(card, 0) + 1
         else:
-            msg = f"Invalid location: {location}. Must be one of 'DiscardPile', 'DrawPile', or 'Hand'."  # noqa: E501
+            msg = f"Invalid location: {location}. Can only gain to 'DiscardPile', 'DrawPile', or 'Hand'."  # noqa: E501
             raise ValueError(
                 msg,
             )
 
-    def buy(self, card: cards.Card) -> None:
+        # (Not sure where supply should be stored yet and
+        # which classes should be able to edit it). Should a player hold a copy?
+        # Should some Game or GameState class deal with this?
+        # I think it is better that gain/trash not return an edited board
+        # but rather edit it directly.
+        board.supply[card] -= 1
+        return board
+
+    def buy(self, card: cards.Card, board: board.Board) -> board.Board:
         """Buy a card."""
         # I assume we would want to check "legality" of a buy before we get here.
-        # i.e. check if the card is in the supply, if the player has enough money,
-        # if the player has enough buys, etc.
+        # i.e. check if the card is (still) in the supply, if the player has
+        # enough money, enough buys, etc.
         self.turn_money -= card.cost
         self.turn_buys -= 1
-        self.gain(card, "DiscardPile")
+        self.gain(card, "DiscardPile", board)
+        return board
 
     def cleanup(self) -> None:
         """Clean up the player's turn."""
@@ -116,14 +127,59 @@ class Player(pydantic.BaseModel):
             else:
                 self.discard_pile[card] = multiplicity
 
+        self.hand = {}
+
         for card in self.cards_in_play:
             if card in self.discard_pile:
                 self.discard_pile[card] += 1
             else:
                 self.discard_pile[card] = 1
 
-        self.hand = {}
         self.cards_in_play = []
+
         self.turn_money = 0
         self.turn_actions = 1
         self.turn_buys = 1
+
+    def trash(
+        self,
+        board: board.Board,
+        card: cards.Card,
+        location: typing.Literal["Hand", "OpponentDrawPile", "Supply"],
+        opponent: typing.Self | None,
+    ) -> board.Board:
+        """Trash a card."""
+        # I assume we would want to check "legality" of a trash before we get here.
+        # i.e. check if the card is in the player's hand/draw pile,if the card is
+        # in the supply (if you're  dict[cards.Card, int] trying to trash from supply)
+        # etc.
+        #
+        # As with gain, I'm not happy about this function returning board. That seems
+        # like the incorrect choice, but I am leaving it for now and we can reevaluate
+        # when we decide what a Game or GameState class should look like and how
+        # players will interact with communal aspects of the game.
+
+        if location == "Hand":
+            self.hand[card] -= 1
+
+        elif location == "OpponentDrawPile":
+            # My thought for the flow here is that, say for a card like Bandit,
+            # the play method for Bandit would first draw the opponent's top card,
+            # then check if it is a silver or gold, and then call this method
+            # with the opponent's draw pile as the location and silver or
+            # gold as the card. So you would always know that the card is in
+            # the opponent's draw pile before getting here.
+            if opponent is None:
+                msg = "No opponent provided."
+                raise ValueError(msg)
+
+            opponent.draw_pile[card] -= 1  # type: ignore[call-overload]
+
+        elif location == "Supply":
+            board.supply[card] -= 1
+
+        else:
+            pass
+
+        board.trash[card] = board.trash.get(card, 0) + 1
+        return board
