@@ -2,6 +2,12 @@
 
 Playing Dominion with Deep Reinforcement Learning.
 
+## Contributing
+
+TODO
+
+* To run tests with coverage: `pytest --cov-report term-missing --cov=python`
+
 ## References
 
 1. [AlphaZero](https://arxiv.org/abs/1712.01815)
