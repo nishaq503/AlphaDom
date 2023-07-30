@@ -102,26 +102,30 @@ class Board(pydantic.BaseModel):
 
         return name
 
+    @property
+    def kingdom_cards(self) -> list[cards.Card]:
+        """Return the kingdom cards in the board."""
+        return self.kingdom_supply_cards + self.non_kingdom_supply_cards
+
     def set_initial_supply(self, num_players: int = 2) -> None:
-        """Set initial (before dealing starting hands) card counts for supply cards."""
-        # I think the supply count for an individual card should either be a member
-        # of each card(or--and I think this would be better--when we make each card
-        # its own class, we have a method for getting the supply count as a function
-        # of the number of players). I think this method should just be pulling from
-        # information stored in the cards, not doing its own calculations/logic
-        for card in self.non_kingdom_supply_cards + self.kingdom_supply_cards:
-            if "Victory" in card.types:
-                self.supply[card] = (
-                    4 + 2 * num_players
-                    if card.name != "Estate"
-                    else 4 + 5 * num_players
-                )
-            elif "Treasure" in card.types:
-                self.supply[card] = (
-                    60 if card.name == "Copper" else 40 if card.name == "Silver" else 30
-                )
-            elif "Curse" in card.types:
+        """Set initial card counts for supply cards.
+
+        Args:
+            num_players: The number of players in the game.
+        """
+        # TODO: Make a class hierarchy for cards and move this logic to the cards'
+        # own class
+        for card in self.kingdom_cards:
+            if card.name == "Copper":
+                self.supply[card] = 60
+            elif card.name == "Silver":
+                self.supply[card] = 40
+            elif card.name == "Gold":
+                self.supply[card] = 30
+            elif card.name == "Curse":
                 self.supply[card] = 10 * (num_players - 1)
+            elif "Victory" in card.types:
+                self.supply[card] = 4 + 2 * num_players
             else:  # "Action" in card.types
                 self.supply[card] = 10
 
