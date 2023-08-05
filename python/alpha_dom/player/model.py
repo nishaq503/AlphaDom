@@ -17,6 +17,10 @@ class Player(pydantic.BaseModel):
         draw_pile: Cards in the player's draw pile.
         hand: Cards in the player's hand and their multiplicity.
         discard_pile: Cards in the player's discard pile and their multiplicity.
+        actions: The number of actions the player has left.
+        money: The amount of money the player has left.
+        buys: The number of buys the player has left.
+        cards_in_play: Cards in the player's play area.
     """
 
     name: int
@@ -166,6 +170,36 @@ class Player(pydantic.BaseModel):
             msg = (
                 f"Invalid source: {source}. "
                 "Can only top deck from 'DiscardPile' or 'Hand'."
+            )
+            raise ValueError(msg)
+
+    def discard(
+        self,
+        card: cards.Card,
+        source: typing.Literal["Hand", "DrawPile"],
+    ) -> None:
+        """Discard a card.
+
+        This method is not responsible for checking if the card can be discarded.
+        That should be done before calling this method.
+
+        Args:
+            card: The card to discard.
+            source: The location to discard the card from.
+        """
+        if source == "Hand":
+            self.hand[card] -= 1
+            self.discard_pile[card] = self.discard_pile.get(card, 0) + 1
+
+        elif source == "DrawPile":
+            self.draw_pile.pop(card)
+            self.discard_pile[card] = self.discard_pile.get(card, 0) + 1
+
+        else:
+            # TODO: Remove this after implementing an enum for destination
+            msg = (
+                f"Invalid source: {source}. "
+                "Can only discard from 'Hand' or 'DrawPile'."
             )
             raise ValueError(msg)
 
