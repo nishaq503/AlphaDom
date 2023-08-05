@@ -139,6 +139,36 @@ class Player(pydantic.BaseModel):
 
         board.supply[card] -= 1
 
+    def top_deck(
+        self,
+        card: cards.Card,
+        source: typing.Literal["DiscardPile", "Hand"],
+    ) -> None:
+        """Top deck a card.
+
+        This method is not responsible for checking if the card can be top-decked.
+        That should be done before calling this method.
+
+        Args:
+            card: The card to top-deck.
+            source: The location to top-deck the card from.
+        """
+        if source == "DiscardPile":
+            self.discard_pile[card] -= 1
+            self.draw_pile.append(card)
+
+        elif source == "Hand":
+            self.hand[card] -= 1
+            self.draw_pile.append(card)
+
+        else:
+            # TODO: Remove this after implementing an enum for destination
+            msg = (
+                f"Invalid source: {source}. "
+                "Can only top deck from 'DiscardPile' or 'Hand'."
+            )
+            raise ValueError(msg)
+
     def buy(self, card: cards.Card, board: board.Board) -> None:
         """Buy a card.
 
