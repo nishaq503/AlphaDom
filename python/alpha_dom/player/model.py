@@ -13,8 +13,7 @@ class Player(pydantic.BaseModel):
     """A pydantic model for a player in Dominion.
 
     Attributes:
-        id: A unique identifier for the player.
-        deck: Cards in the player's deck and their multiplicity.
+        name: A unique identifier for the player.
         draw_pile: Cards in the player's draw pile.
         hand: Cards in the player's hand and their multiplicity.
         discard_pile: Cards in the player's discard pile and their multiplicity.
