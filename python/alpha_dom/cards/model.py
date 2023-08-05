@@ -78,6 +78,7 @@ class Card(pydantic.BaseModel):
         types: The types of the card.
         description: The description of the card.
         expansion: The expansion of the card.
+        associated_cards: Additional cards that are associated with the card.
     """
 
     name: str
