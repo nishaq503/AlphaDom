@@ -16,8 +16,8 @@ class Board(pydantic.BaseModel):
 
     Attributes:
         name: A name for the board.
-        kingdom_names: Names of kingdom cards in the board.
-        non_kingdom_supply: Common cards in the board.
+        kingdom_supply_cards: The kingdom cards in the board.
+        non_kingdom_supply: The common cards in the board.
         trash: Cards in the trash and their multiplicity.
         supply: Cards in the supply and their multiplicity.
     """
@@ -60,7 +60,7 @@ class Board(pydantic.BaseModel):
         return self.name == other.name
 
     def __lt__(self, other: typing.Self) -> bool:  # type: ignore[override]
-        """Allows sorting kindgoms by name."""
+        """Allows sorting kingdoms by name."""
         return self.name < other.name
 
     def __hash__(self) -> int:
